@@ -184,23 +184,13 @@ function ControlTray({
               onIcon="cancel_presentation"
               offIcon="present_to_all"
             />
-            <>
-              <MediaStreamButton
-                isStreaming={webcam.isStreaming}
-                start={changeStreams(webcam)}
-                stop={changeStreams()}
-                onIcon="videocam_off"
-                offIcon="videocam"
-              />
-              {webcam.isMobile && webcam.isStreaming && (
-                <button
-                  className="action-button"
-                  onClick={webcam.switchCamera}
-                >
-                  <span className="material-symbols-outlined">flip_camera_android</span>
-                </button>
-              )}
-            </>
+            <MediaStreamButton
+              isStreaming={webcam.isStreaming}
+              start={changeStreams(webcam)}
+              stop={changeStreams()}
+              onIcon="videocam_off"
+              offIcon="videocam"
+            />
           </>
         )}
         {children}

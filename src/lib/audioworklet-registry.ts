@@ -33,15 +33,7 @@ export const createWorketFromSrc = (
   workletSrc: string,
 ) => {
   const script = new Blob(
-    [
-      `class AudioWorkletProcessor {
-        constructor() { this.port = null; }
-        process() { return true; }
-      }
-      ${workletSrc}
-      registerProcessor("${workletName}", eval(${JSON.stringify(workletSrc)}));
-      `
-    ],
+    [`registerProcessor("${workletName}", ${workletSrc})`],
     {
       type: "application/javascript",
     },
