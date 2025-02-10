@@ -40,9 +40,11 @@ export function useWebcam(): UseMediaStreamResult {
     }
   }, [stream]);
 
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
+
   const start = async () => {
     const mediaStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
+      video: { facingMode },
     });
     setStream(mediaStream);
     setIsStreaming(true);
@@ -57,12 +59,19 @@ export function useWebcam(): UseMediaStreamResult {
     }
   };
 
+  const switchCamera = () => {
+    stop();
+    setFacingMode(prev => prev === 'user' ? 'environment' : 'user');
+  };
+
   const result: UseMediaStreamResult = {
     type: "webcam",
     start,
     stop,
     isStreaming,
     stream,
+    switchCamera,
+    isMobile: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
   };
 
   return result;
