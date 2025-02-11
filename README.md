@@ -2,9 +2,6 @@
 
 This repository contains a react-based starter app for using the [Multimodal Live API](<[https://ai.google.dev/gemini-api](https://ai.google.dev/api/multimodal-live)>) over a websocket. It provides modules for streaming audio playback, recording user media such as from a microphone, webcam or screen capture as well as a unified log view to aid in development of your application.
 
-[![Multimodal Live API Demo](readme/thumbnail.png)](https://www.youtube.com/watch?v=J_q7JY1XxFE)
-
-Watch the demo of the Multimodal Live API [here](https://www.youtube.com/watch?v=J_q7JY1XxFE).
 
 ## Usage
 
@@ -20,77 +17,6 @@ We have provided several example applications on other branches of this reposito
 - [demos/GenWeather](https://github.com/google-gemini/multimodal-live-api-web-console/tree/demos/genweather)
 - [demos/GenList](https://github.com/google-gemini/multimodal-live-api-web-console/tree/demos/genlist)
 
-## Example
-
-Below is an example of an entire application that will use Google Search grounding and then render graphs using [vega-embed](https://github.com/vega/vega-embed):
-
-```typescript
-import { type FunctionDeclaration, SchemaType } from "@google/generative-ai";
-import { useEffect, useRef, useState, memo } from "react";
-import vegaEmbed from "vega-embed";
-import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
-
-export const declaration: FunctionDeclaration = {
-  name: "render_altair",
-  description: "Displays an altair graph in json format.",
-  parameters: {
-    type: SchemaType.OBJECT,
-    properties: {
-      json_graph: {
-        type: SchemaType.STRING,
-        description:
-          "JSON STRING representation of the graph to render. Must be a string, not a json object",
-      },
-    },
-    required: ["json_graph"],
-  },
-};
-
-export function Altair() {
-  const [jsonString, setJSONString] = useState<string>("");
-  const { client, setConfig } = useLiveAPIContext();
-
-  useEffect(() => {
-    setConfig({
-      model: "models/gemini-2.0-flash-exp",
-      systemInstruction: {
-        parts: [
-          {
-            text: 'You are my helpful assistant. Any time I ask you for a graph call the "render_altair" function I have provided you. Dont ask for additional information just make your best judgement.',
-          },
-        ],
-      },
-      tools: [{ googleSearch: {} }, { functionDeclarations: [declaration] }],
-    });
-  }, [setConfig]);
-
-  useEffect(() => {
-    const onToolCall = (toolCall: ToolCall) => {
-      console.log(`got toolcall`, toolCall);
-      const fc = toolCall.functionCalls.find(
-        (fc) => fc.name === declaration.name
-      );
-      if (fc) {
-        const str = (fc.args as any).json_graph;
-        setJSONString(str);
-      }
-    };
-    client.on("toolcall", onToolCall);
-    return () => {
-      client.off("toolcall", onToolCall);
-    };
-  }, [client]);
-
-  const embedRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (embedRef.current && jsonString) {
-      vegaEmbed(embedRef.current, JSON.parse(jsonString));
-    }
-  }, [embedRef, jsonString]);
-  return <div className="vega-embed" ref={embedRef} />;
-}
-```
 
 ## development
 
