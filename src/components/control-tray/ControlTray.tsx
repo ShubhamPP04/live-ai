@@ -24,7 +24,6 @@ import { useWebcam } from "../../hooks/use-webcam";
 import { AudioRecorder } from "../../lib/audio-recorder";
 import AudioPulse from "../audio-pulse/AudioPulse";
 import "./control-tray.scss";
-import { CameraControls } from './CameraControls';
 
 export type ControlTrayProps = {
   videoRef: RefObject<HTMLVideoElement>;
@@ -192,7 +191,6 @@ function ControlTray({
               onIcon="videocam_off"
               offIcon="videocam"
             />
-            {webcam.isStreaming && <CameraControls videoStream={webcam as UseMediaStreamResult & { switchCamera?: () => Promise<void>; facingMode?: string }} />}
           </>
         )}
         {children}
